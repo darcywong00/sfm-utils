@@ -1,0 +1,70 @@
+name: Build. Compile and Upload Installer for Releases
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+      - feat/import-export
+  release:
+    types:
+      # Doesn't trigger for draft releases
+      - published
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: npm install
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: npm run build
+
+    - name: Upload dist/ for installer job
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist/
+        retention-days: 3
+
+  publish:
+    name: Compile executable and upload asset to release
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download dist/
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+      - name: Install dependencies
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: npm install
+
+      # Create executable
+      - name: Publish
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: npm run publish
+
+      - name: Upload the Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sfm-utils
+          path: deploy/
+
+      # Upload installer to release tag which triggered this build
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: deploy/sfm-utils.exe
+          tag_name: ${{ github.event.release.tag_name }}
