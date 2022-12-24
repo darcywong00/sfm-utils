@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name=""viewport" content="width=device-width, initial-scale=1" />
+    <title>SFM-Utils</title>
+    <script type="module" src="index.js"></script>
+    <script>
+      function chooseFile() {
+        let input = document.createInput('input');
+        input.type = 'file';
+        input.onchange = _ => {
+          let files = Array.from(input.files);
+          console.log(files);
+        };
+        input.click;
+      }
+    </script>
+  </head>
+  <body>
+    <h1>SFM-Utils - Converts Toolbox .txt files into SFM for Paratext</h1>
+    
+    <h2>Usage</h2>
+    <div>
+      <p>
+        Required: Paratext project name (can be 3-character abbreviation)
+      </p>
+      <p>
+        <input id='projectName' class='test' value='' placeholder='project name'/>
+      </p>
+    </div>
+
+    <div>
+      <p>
+        Then choose one of the following along with the corresponding path to txt/dir:
+        <ul>
+          <li>A single Toolbox text file (one chapter of a book)</li>
+          <li>Directory of Toolbox text files for a single book (one chapter per file)</li>
+          <li>JSON file representing a single book - used for testing conversion to SFM</li>
+          <li>Directory of directories (each subdirectory is a separate book)</li>
+        </ul>
+
+        Processing Mode<br>
+        <select name="processingMode">
+          <option value="-t">Toolbox txt file</option>
+          <option value="-d">Directory of Toolbox txt files</option>
+          <option value="-j">JSON file for a single book</option>
+          <option value="-s">Directory of directories</option>
+        </select>
+
+        <button onclick="chooseFile()">Choose file/dir</button>
+      </p>
+    </div>
+
+    <div>
+      <p>
+        Source on <a href="https://github.com/mseag/sfm-utils">GitHub</a>
+      </p>
+      <p>
+        Copyright(c) 2022 - SIL International
+      </p>
+    </div>
+  </body>
+</html>
